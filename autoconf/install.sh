@@ -22,29 +22,39 @@
 # install dos2unix, git, vim, g++, ctags, cmake, python-dev
 ./change_source_list.sh
 
-sudo apt-get update -y
+INSTALL_TOOL=apt-get
 
-dos2unix --version || sudo apt-get install dos2unix -y
+apt-get > /dev/null
+if [ "$?" != "0" ];
+then
+    INSTALL_TOOL=yum
+fi
+
+echo "INSTALL_TOOL: " $INSTALL_TOOL
+
+sudo $INSTALL_TOOL update -y
+
+dos2unix --version > /dev/null || sudo $INSTALL_TOOL install dos2unix -y
 dos2unix --version || exit 1
 
-git --version || sudo apt-get install git -y
-git --version || exit 1
+git --version > /dev/null || sudo $INSTALL_TOOL install git -y
+git --version > /dev/null || exit 1
 git config --global user.email user_email@gmail.com
 git config --global user.name user_name
 
-vim --version || sudo apt-get install vim -y
-vim --version || exit 1
+vim --version > /dev/null || sudo $INSTALL_TOOL install vim -y
+vim --version > /dev/null || exit 1
 
-g++ --version || sudo apt-get install g++ -y
-g++ --version || exit 1
+g++ --version > /dev/null || sudo $INSTALL_TOOL install g++ -y
+g++ --version > /dev/null || exit 1
 
-ctags --version || sudo apt-get install ctags -y
-ctags --version || exit 1
+ctags --version > /dev/null || sudo $INSTALL_TOOL install ctags -y
+ctags --version > /dev/null || exit 1
 
-cmake --version || sudo apt-get install cmake -y
-cmake --version || exit 1
+cmake --version > /dev/null || sudo $INSTALL_TOOL install cmake -y
+cmake --version > /dev/null || exit 1
 
-sudo apt-get install python-dev -y
+sudo $INSTALL_TOOL install python-dev -y
 
 # copy _vimrc file to $HOME
 dos2unix _vimrc
@@ -77,7 +87,7 @@ else
     sudo git clone https://github.com/Valloric/YouCompleteMe.git ${ycm_path} || exit 2
     cd ${ycm_path}
 fi
-sudo git submodule update --init --recursive
+sudo git submodule update --init --recursive || exit 3
 sudo ./install.sh --clang-completer || exit 3
 
 # install vim-plugins
